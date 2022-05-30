@@ -14,3 +14,9 @@ fi
 
 echo Unpack from \""$FROM_PATH"\" to \""$TO_PATH"\"
 
+FILES_AMOUNT=$(ls "$FROM_PATH"/*.zip \
+  "$FROM_PATH"/*.rar \
+  "$FROM_PATH"/*.7z \
+  2> /dev/null \
+  | wc -l)
+echo Amount of files is "$FILES_AMOUNT"
