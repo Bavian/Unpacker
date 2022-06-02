@@ -7,6 +7,10 @@ _basename_without_extension() {
   _basename_without_extension_result=${_basename%.*}
 }
 
+_count_elements() {
+  _count_elements_result=$(7z l -slt "$1" | grep -c "Path = ")
+}
+
 # UNPACKING ENTRY POINT
 if [ $# == 0 ]; then
 	FROM_PATH="."
@@ -39,7 +43,11 @@ for file in "$FROM_PATH"/*.zip "$FROM_PATH"/*.rar "$FROM_PATH"/*.7z; do
   [ -f "$file" ] || continue
   _basename_without_extension "$file"
   dir_name=$_basename_without_extension_result
-  full_name=$TO_PATH/$dir_name
+  _count_elements "$file"
+  full_name="$TO_PATH"
+  if [ "$_count_elements_result" -ne "2" ]; then
+    full_name="$full_name/$dir_name"
+  fi
 
   next_file_info="$((counter+1)). $dir_name"
   if [ $counter != 0 ]; then
