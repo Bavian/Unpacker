@@ -1,6 +1,22 @@
 #!/bin/bash
 
 # GLOBAL SCOPE DECLARATIONS
+
+## CONSTANTS
+
+### CURSOR MOVERS
+
+CURSOR_TO_LINE_START="\r\033[K"
+CURSOR_TO_PREVIOUS_LINE="\e[1A"
+
+### COLORS
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+RESET_COLOR="\033[0m"
+
+## FUNCTIONS
+
 _basename_without_extension() {
   local _basename
   _basename=$(basename "$1")
@@ -11,7 +27,8 @@ _count_elements() {
   _count_elements_result=$(7z l -slt "$1" | grep -c "Path = ")
 }
 
-# UNPACKING ENTRY POINT
+# MAIN ENTRY POINT
+
 if [ $# == 0 ]; then
 	FROM_PATH="."
 else
@@ -50,13 +67,15 @@ for file in "$FROM_PATH"/*.zip "$FROM_PATH"/*.rar "$FROM_PATH"/*.7z; do
   fi
 
   next_file_info="$((counter+1)). $dir_name"
-  if [ $counter != 0 ]; then
-    echo -e -n "\r\033[K"
-  fi
   echo "$next_file_info"
   echo -e -n "$counter/$files_amount"
 
-  7z -y -o"$full_name" x "$file" > /dev/null
+  status_of_result="${RED}X${RESET_COLOR}"
+  if 7z -y -o"$full_name" x "$file" > /dev/null 2> /dev/null; then
+    status_of_result="${GREEN}V${RESET_COLOR}"
+  fi
+  echo -e -n "$CURSOR_TO_LINE_START$CURSOR_TO_PREVIOUS_LINE"
+  echo -e "$next_file_info $status_of_result"
 
   ((counter=counter+1))
 done
