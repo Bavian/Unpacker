@@ -43,16 +43,13 @@ echo Removing old directory...
 rm -fr "$TO_PATH"
 mkdir -p "$TO_PATH"
 
-files_amount=$(ls "$FROM_PATH"/*.zip \
-  "$FROM_PATH"/*.rar \
-  "$FROM_PATH"/*.7z \
-  2> /dev/null \
-  | wc -l)
+files=$(find "$FROM_PATH" -name "*.zip" -o -name "*.rar" -o -name "*.7z")
+files_amount=$(wc -l <<< "$files")
 echo Amount of files is "$files_amount"
 
 echo Start to unpack...
 counter=0
-for file in "$FROM_PATH"/*.zip "$FROM_PATH"/*.rar "$FROM_PATH"/*.7z; do
+while read -r file; do
   [ -f "$file" ] || continue
   _basename_without_extension "$file"
   dir_name=$_basename_without_extension_result
@@ -74,7 +71,7 @@ for file in "$FROM_PATH"/*.zip "$FROM_PATH"/*.rar "$FROM_PATH"/*.7z; do
   echo -e "$next_file_info $status_of_result"
 
   ((counter=counter+1))
-done
+done <<< "$files"
 
 echo -e "\r\033[K$files_amount/$files_amount"
 
