@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. colors.env
+
 # GLOBAL SCOPE DECLARATIONS
 
 ## CONSTANTS
@@ -8,12 +10,6 @@
 
 CURSOR_TO_LINE_START="\r\033[K"
 CURSOR_TO_PREVIOUS_LINE="\e[1A"
-
-### COLORS
-
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-RESET_COLOR="\033[0m"
 
 # MAIN ENTRY POINT
 
@@ -57,9 +53,9 @@ while read -r file; do
   echo "$next_file_info"
   echo -e -n "$counter/$files_amount"
 
-  status_of_result="${RED}X${RESET_COLOR}"
+  status_of_result="${COLOR_RED}X${COLOR_RESET}"
   if 7z -y -o"$full_name" x "$file" > /dev/null 2> /dev/null; then
-    status_of_result="${GREEN}V${RESET_COLOR}"
+    status_of_result="${COLOR_GREEN}V${COLOR_RESET}"
   fi
   echo -e -n "$CURSOR_TO_LINE_START$CURSOR_TO_PREVIOUS_LINE"
   echo -e "$next_file_info $status_of_result"
