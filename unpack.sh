@@ -15,21 +15,14 @@ RED="\033[0;31m"
 GREEN="\033[0;32m"
 RESET_COLOR="\033[0m"
 
-## FUNCTIONS
-
-_basename_without_extension() {
-  local _basename
-  _basename=$(basename "$1")
-  _basename_without_extension_result=${_basename%.*}
-}
-
 # MAIN ENTRY POINT
 
 if [ $# == 0 ]; then
 	FROM_PATH="."
 else
-  FROM_PATH=$(realpath "$1")
+  FROM_PATH="$1"
 fi
+FROM_PATH=$(realpath "$FROM_PATH")
 
 if [ $# -lt 2 ]; then
   TO_PATH="$FROM_PATH/unpacked"
@@ -50,13 +43,14 @@ echo Amount of files is "$files_amount"
 echo Start to unpack...
 counter=0
 while read -r file; do
-  [ -f "$file" ] || continue
-  _basename_without_extension "$file"
-  dir_name=$_basename_without_extension_result
+  dir_name=${file#"$FROM_PATH/"}
   elements_count=$(bash list_files.sh "$file" | wc -l)
-  full_name="$TO_PATH"
-  if [ "$elements_count" -ne "1" ]; then
-    full_name="$full_name/$dir_name"
+  full_name="$TO_PATH/$dir_name"
+  if [ "$elements_count" -le "1" ]; then
+    file_basename=$(basename "$file")
+    full_name=${full_name%"$file_basename"}
+  else
+    full_name=${full_name%.*}
   fi
 
   next_file_info="$((counter+1)). $dir_name"
