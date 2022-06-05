@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. colors.env
+. statuses.env
 
 # GLOBAL SCOPE DECLARATIONS
 
@@ -53,9 +53,9 @@ while read -r file; do
   echo "$next_file_info"
   echo -e -n "$counter/$files_amount"
 
-  status_of_result="${COLOR_RED}X${COLOR_RESET}"
+  status_of_result="$STATUS_ERROR"
   if 7z -y -o"$full_name" x "$file" > /dev/null 2> /dev/null; then
-    status_of_result="${COLOR_GREEN}V${COLOR_RESET}"
+    status_of_result="$STATUS_SUCCESS"
   fi
   echo -e -n "$CURSOR_TO_LINE_START$CURSOR_TO_PREVIOUS_LINE"
   echo -e "$next_file_info $status_of_result"
